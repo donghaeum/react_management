@@ -27,34 +27,34 @@ const styles = theme => ({
     minWidth: 1080
   },
   progress: {
-    // margin: theme.spacing(2)
+    margin: theme.spacing(2)
   },
   menuButton: {
-    // marginRight: theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
     display: 'none',
-    // [theme.breakpoints.up('sm')]: {
-    //   display: 'block',
-    // },
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
+    },
   },
   search: {
     position: 'relative',
-    // borderRadius: theme.shape.borderRadius,
-    // backgroundColor: alpha(theme.palette.common.white, 0.15),
-    // '&:hover': {
-    //   backgroundColor: alpha(theme.palette.common.white, 0.25),
-    // },
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
     marginLeft: 0,
     width: '100%',
-    // [theme.breakpoints.up('sm')]: {
-    //   // marginLeft: theme.spacing(1),
-    //   width: 'auto',
-    // },
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(1),
+      width: 'auto',
+    },
   },
   searchIcon: {
-    // padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
     pointerEvents: 'none',
@@ -66,23 +66,30 @@ const styles = theme => ({
     color: 'inherit',
   },
   inputInput: {
-    // padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    // paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    // transition: theme.transitions.create('width'),
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
     width: '100%',
-    // [theme.breakpoints.up('sm')]: {
-    //   width: '12ch',
-    //   '&:focus': {
-    //     width: '20ch',
-    //   },
-    // },
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
   },
 })
 
-
-
 class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      webtoons: '',
+      completed: 0,
+      searchKeyword: ''
+    }
+  }
+  
 
   state = {
     webtoons: "",
@@ -106,8 +113,22 @@ class App extends Component {
     const {completed} = this.state;
     this.setState({ completed: completed >= 100 ? 0 : completed + 1});
   }
+
+  handleValueChange = (e) => {
+    let nextState = {};
+    nextState[e.target.pdate] = e.target.value;
+    this.setState(nextState);
+  }
   
   render() {
+    const filteredComponents = (data) => {
+      data = data.filter((c) => {
+        return c.title.indexOf(this.state.searchKeyword) > -1;
+      });
+      return data.map((c) => {
+        return <Webtoon id={c.id} image={c.image} title={c.title} pdate={c.pdate} ldate={c.ldate} genre={c.genre} platform={c.platform}/>
+      });
+    }
     const {classes} = this.props;
     return (
       <div className={classes.root}>
@@ -134,7 +155,10 @@ class App extends Component {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
-                inputProps={{ 'aria-label': 'search' }}
+                year="searchKeyword"
+                value={this.state.searchKeyword}
+                onChange={this.handleValueChange}
+                // inputProps={{ 'aria-label': 'search' }}
               />
             </div>
           </Toolbar>
@@ -154,19 +178,23 @@ class App extends Component {
             </TableHead>
             <TableBody>
               {
-                this.state.webtoons ? this.state.webtoons.map(w => {
-                  return (
-                    <Webtoon 
-                      id={w.id}
-                      image={w.image}
-                      title={w.title}
-                      pdate={w.pdate}
-                      ldate={w.ldate}
-                      genre={w.genre}
-                      platform={w.platform}
-                    />
-                  )
-                }) : 
+                this.state.webtoons ? 
+                  filteredComponents(this.state.webtoons)
+                // this.state.webtoons.map(w => {
+                //   return (
+                //     <Webtoon 
+                //       id={w.id}
+                //       image={w.image}
+                //       title={w.title}
+                //       pdate={w.pdate}
+                //       ldate={w.ldate}
+                //       genre={w.genre}
+                //       platform={w.platform}
+                //     />
+                //   )
+                // }
+                // ) 
+                : 
                 <TableRow>
                   <TableCell colSpan="7" align="center">
                     <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed}/>
