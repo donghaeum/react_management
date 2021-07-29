@@ -17,6 +17,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import {DataGrid} from '@material-ui/data-grid';
 
 const styles = theme => ({
   root: {
@@ -180,20 +181,6 @@ class App extends Component {
               {
                 this.state.webtoons ? 
                   filteredComponents(this.state.webtoons)
-                // this.state.webtoons.map(w => {
-                //   return (
-                //     <Webtoon 
-                //       id={w.id}
-                //       image={w.image}
-                //       title={w.title}
-                //       pdate={w.pdate}
-                //       ldate={w.ldate}
-                //       genre={w.genre}
-                //       platform={w.platform}
-                //     />
-                //   )
-                // }
-                // ) 
                 : 
                 <TableRow>
                   <TableCell colSpan="7" align="center">
@@ -204,6 +191,7 @@ class App extends Component {
             </TableBody>
           </Table>
         </Paper>
+        {/* <DataGrid pageSize={10}/> */}
       </div>
       
     )
